@@ -159,23 +159,59 @@ public class StringList {
             return new StringList(_concatFrom);
         }
     }
-    /*
 
-    public int indexOf (int ch) {
-
+    public int indexOf(int ch) {
+        CharNode _r = _head;
+        int i = 0;
+        while ( _head != null ) {
+            if(ch == (int) _head.getData()) {
+                _head = _r;
+                return i;
+            }
+            if(_head.getValue() > 1) {
+                i += _head.getValue();
+            } else {
+                i++;
+            }
+            _head = _head.getNext();
+        }
+        _head = _r;
+        return -1;
     }
 
-    public int indexOf (int ch, int fromIndex) {
-
+    public int indexOf(int ch, int fromIndex) {
+        CharNode _r = _head;
+        int i = 0;
+        while ( _head != null ) {
+            if(ch == (int) _head.getData()) {
+                if(i >= fromIndex){
+                    _head = _r;
+                    return i;
+                }
+            }
+            if(_head.getValue() > 1) {
+                i += _head.getValue();
+            } else {
+                i++;
+            }
+            _head = _head.getNext();
+        }
+        _head = _r;
+        return -1;
     }
-    */
 
-    public boolean equals (StringList str, int _strOffset, boolean notNull) {
-        if( _strOffset > str.length()){ //end
+    /**
+     * recursive check if chars equals, increasing offset if does
+     * @param str
+     * @param _strOffset
+     * @return
+     */
+    public boolean equals (StringList str, int _strOffset) {
+        if( _strOffset >= str.length()){ //end
             return true;
         } else if( charAt(_strOffset) == str.charAt(_strOffset) ){
             _strOffset++;
-            return equals(str, _strOffset, true);
+            return equals(str, _strOffset);
         } else {
             return false;
         }
@@ -192,7 +228,7 @@ public class StringList {
         if(length() != str.length()) { //diff length ofc false
             return false;
         }
-        ans = equals( str, 1, true);
+        ans = equals( str, 0);
         _head = _head_save;
         return ans;
     }
