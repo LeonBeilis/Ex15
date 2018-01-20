@@ -197,11 +197,30 @@ public class StringList {
         return ans;
     }
 
-    /*
-
+    /**
+     * compare between stringlist value depended
+     * self == str = 0 | self < str = -1 | self > str = 1;
+     * @param str
+     * @return int
+     */
     public int compareTo (StringList str) {
-
+        int listSelf = 0;
+        int listStr = 0;
+        for (int i = 1; i <= length(); i++){
+            listSelf += (int) charAt(i);
+        }
+        for (int i = 1; i <= str.length(); i++){
+            listStr += (int) str.charAt(i);
+        }
+        if(listSelf == listStr){
+            return 0;
+        } else if( listSelf < listStr){
+            return -1;
+        }
+        return 1;
     }
+
+    /*
 
     public StringList substring(int i) {
 
