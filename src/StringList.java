@@ -51,38 +51,62 @@ public class StringList {
 
     /**
      * Copy Constructor
-     * todo: fix for loop, value is times the char counted in row..
      * @param other
      */
     public StringList (StringList other) {
-        System.out.println("other: " + other);
-//        String toString = other.toString();
-//        return new StringList(toString);
-        /*
-        int otherLength = other.length();
-        _head = new CharNode( other.charAt(0), 1,null); //node init
-        if(otherLength <= 1){ // if one letter
-            return;
+        String s = new String(other.toString());
+        s = s.replace("\"",""); //remove "" from other
+        if(s == null) {
+            _head = null;
+        } else {
+            _head = new CharNode( s.charAt(0), 1,null);
+            if(s.length() <= 1){ // if one letter
+                return;
+            }
+            CharNode tmp = _head;
+            int nextCharIndex = 1;
+            while ( nextCharIndex < s.length() ) {
+                if(_head.getData() == s.charAt(nextCharIndex)) { //update value
+                    _head.setValue( _head.getValue() + 1 );
+                    nextCharIndex++;
+                } else {
+                    _head.setNext( new CharNode( s.charAt(nextCharIndex), 1,null) );
+                    _head = _head.getNext();
+                    nextCharIndex++;
+                }
+            }
+            _head = tmp; //reset _head to first
         }
-        CharNode tmp = _head;
-        for(int i=1; i < otherLength; i++){
-            _head.setNext( new CharNode( other.charAt(i), i,null) );
-            _head = _head.getNext();
-        }
-        _head = tmp; //reset _head to first
-        */
     }
 
     /**
      * return char by index
-     * todo: check if while reach to null, what to do then
      * @param i
      * @return
      */
     public char charAt(int i) {
         CharNode keepFirst = _head;
-        while (  (_head.getValue() != i) && _head != null ) {
-            _head = _head.getNext();
+        int c = 1;
+        boolean flag = true;
+        while (  _head != null && flag ) {
+            if( _head.getValue() > 1 ) {
+                int l = c;
+                c += _head.getValue();
+                if(i < c && i >= l){ //in range
+                    flag = false;
+                    break;
+                } else {
+                    _head = _head.getNext();
+                }
+            } else {
+                if(i == c){
+                    flag = false;
+                    break;
+                } else {
+                    c++;
+                    _head = _head.getNext();
+                }
+            }
         }
         char foundCharacter = _head.getData();
         _head = keepFirst;
@@ -90,26 +114,50 @@ public class StringList {
     }
 
     /**
-     * todo: test it, mostly need to do all over
+     * todo: test this method
      * @param str
      * @return
      */
     public StringList concat (StringList str) {
-        CharNode _headTmp = _head;
-        String listA = new String();
-        while (  _head != null ) {
-            listA += _head.getData();
+        //save local _head
+        CharNode reset = _head;
+        //new head
+        CharNode _concatStart = _head;
+        CharNode _concatFrom = _head;
+        while (_head != null){
+            if(_head.getNext() == null){
+                break;
+            }
             _head = _head.getNext();
         }
-        _head = _headTmp;
-        int strIndex = 0;
-        int strLength = str.length();
-        while ( strIndex < strLength ) {
-            listA += str.charAt(strIndex);
-            strIndex++;
+        _concatFrom = _head;
+        _head = reset; //rest to first
+
+        String s = new String(str.toString()); //new String to concat
+        s = s.replace("\"",""); //remove "" from other
+
+        if(s == null) {
+            return new StringList(_concatStart); //return self and exit
+        } else {
+            _concatFrom.setNext(  new CharNode( s.charAt(0), 1,null) );
+            _concatFrom = _concatFrom.getNext();
+            if(s.length() <= 1){ // if one letter
+                return new StringList(_concatStart);
+            }
+            int nextCharIndex = 1;
+            while ( nextCharIndex < s.length() ) {
+                if(_concatFrom.getData() == s.charAt(nextCharIndex)) { //update value
+                    _concatFrom.setValue( _concatFrom.getValue() + 1 );
+                    nextCharIndex++;
+                } else {
+                    _concatFrom.setNext( new CharNode( s.charAt(nextCharIndex), 1,null) );
+                    _concatFrom = _concatFrom.getNext();
+                    nextCharIndex++;
+                }
+            }
+            _concatFrom = _concatStart;
+            return new StringList(_concatFrom);
         }
-        StringList concatStringList = new StringList(listA);
-        return concatStringList;
     }
     /*
 
@@ -120,10 +168,36 @@ public class StringList {
     public int indexOf (int ch, int fromIndex) {
 
     }
+    */
 
-    public boolean equals (StringList str) {
-
+    public boolean equals (StringList str, int _strOffset, boolean notNull) {
+        if( _strOffset > str.length()){ //end
+            return true;
+        } else if( charAt(_strOffset) == str.charAt(_strOffset) ){
+            _strOffset++;
+            return equals(str, _strOffset, true);
+        } else {
+            return false;
+        }
     }
+
+    /**
+     * check if self equal to str in recursive state
+     * @param str
+     * @return
+     */
+    public boolean equals (StringList str) {
+        boolean ans = false;
+        CharNode _head_save = _head;
+        if(length() != str.length()) { //diff length ofc false
+            return false;
+        }
+        ans = equals( str, 1, true);
+        _head = _head_save;
+        return ans;
+    }
+
+    /*
 
     public int compareTo (StringList str) {
 
@@ -143,8 +217,12 @@ public class StringList {
         int count = 0;
         CharNode keepFirst = _head;
         while (  _head != null ) {
+            if(_head.getValue() > 1){
+                count += _head.getValue();
+            } else {
+                count++;
+            }
             _head = _head.getNext();
-            count++;
         }
         _head = keepFirst;
         return count;
