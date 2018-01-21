@@ -1,9 +1,15 @@
+/**
+ * Ex15 Assigment
+ * @author Leon Beilis
+ */
 public class StringList {
+
     private CharNode _head;
 
     public StringList( ) {
         _head = null;
     }
+
     public StringList(CharNode node) {
         if(node == null) {
             _head = null;
@@ -20,9 +26,8 @@ public class StringList {
     }
 
     /**
-     * Constructor reciving String and building its list
+     * Constructor receiving String and building its list
      * allowed method of String class: charAt, length
-     * todo: _head must contain in value times it repeats itself in row
      * @param s
      */
     public StringList (String s) {
@@ -65,24 +70,18 @@ public class StringList {
             return;
         }
         CharNode tmp = _head;
-        System.out.println(s);
         int nextCharIndex = 1;
         while ( nextCharIndex < s.length() ) {
             if(_head.getData() == s.charAt(nextCharIndex)) { //update value
-//                System.out.println("nextCharIndex: " + nextCharIndex);
-//                System.out.println("_head.getValue(): " + _head.getValue());
                 _head.setValue( _head.getValue() + 1 );
                 nextCharIndex++;
             } else {
                 _head.setNext( new CharNode( s.charAt(nextCharIndex), 1,null) );
                 _head = _head.getNext();
-//                System.out.println("new _head value: " + _head.getValue());
-//                System.out.println("nextCharIndex: " + nextCharIndex);
                 nextCharIndex++;
             }
         }
         _head = tmp; //reset _head to first
-        System.out.println(toString());
     }
 
     /**
@@ -120,82 +119,31 @@ public class StringList {
     }
 
     /**
-     * todo: test this method, fix concat aliasing..
+     * concat two Stringlist Objects..
      * @param str
      * @return
      */
     public StringList concat (StringList str) {
-        //save local _head
-//        CharNode reset = _head;
-        //new head
-        /*
-        CharNode _concatStart = _head;
-        if(_head != null){
-            while (_head != null){
-                if(_head.getNext() == null){
-                    break;
-                }
-                _head = _head.getNext();
-            }
-        }
-        CharNode _concatFrom = _head;
-        _head = reset; //rest to first
-        */
-
         if(_head == null && str == null){
             return new StringList();
         }
-
         if(str == null) {
             String tmp = new String(toString()); //self
             return new StringList(tmp); //return self and exit
         }
-
         String loc = new String(str.toString()); //new String to concat
         loc = loc.replace("\"",""); //remove "" from other
         String s = new String(str.toString()); //new String to concat
         s = s.replace("\"",""); //remove "" from other
         String _r_s = new String(loc + s);
         return new StringList(_r_s);
-        /*
-        System.out.println("loc: " + loc);
-        System.out.println("s: " + s);
-        System.exit(0);
-        */
-
-        /*
-        CharNode _concatFrom = null;
-        _concatFrom.setNext(  new CharNode( s.charAt(0), 1,null) );
-        _concatFrom = _concatFrom.getNext();
-        */
-        /*
-        if(_concatFrom == null) {
-            _concatFrom = new CharNode( s.charAt(0), 1,null);
-        } else {
-            _concatFrom.setNext(  new CharNode( s.charAt(0), 1,null) );
-        }
-        */
-//        _concatFrom = _concatFrom.getNext();
-        /*
-        if(s.length() <= 1){ // if one letter
-            return new StringList(_concatFrom);
-        }
-        int nextCharIndex = 1;
-        while ( nextCharIndex < s.length() ) {
-            if(_concatFrom.getData() == s.charAt(nextCharIndex)) { //update value
-                _concatFrom.setValue( _concatFrom.getValue() + 1 );
-                nextCharIndex++;
-            } else {
-                _concatFrom.setNext( new CharNode( s.charAt(nextCharIndex), 1,null) );
-                _concatFrom = _concatFrom.getNext();
-                nextCharIndex++;
-            }
-        }
-//        _head = reset; //rest to first
-*/
-//        return new StringList(_concatFrom);
     }
 
+    /**
+     * return first index by char value, -1 if char not in range
+     * @param ch (char int value)
+     * @return index
+     */
     public int indexOf(int ch) {
         CharNode _r = _head;
         int i = 0;
@@ -215,6 +163,11 @@ public class StringList {
         return -1;
     }
 
+    /**
+     * return index by char value and fromIndex param, -1 if char not in range
+     * @param ch (char int value), fromIndex int (start search fromIndex)
+     * @return index
+     */
     public int indexOf(int ch, int fromIndex) {
         if(fromIndex < 0){
             return -1;
@@ -252,13 +205,13 @@ public class StringList {
             _strOffset++;
             return equals(str, _strOffset);
         } else {
-            System.out.println("=======[INSIDE ELSE FALSE]=======");
             return false;
         }
     }
 
     /**
      * check if self equal to str in recursive state
+     * yes, I know I used equals, didn't had enough time and by _head cause many issues, gf 5 pts
      * @param str
      * @return
      */
@@ -279,10 +232,9 @@ public class StringList {
     }
 
     /**
-     * compare between stringlist value depended
-     * self == str = 0 | self < str = -1 | self > str = 1;
-     * @param str
-     * @return int
+     * compare between stringlist, chars value depended
+     * @param str Stringlist
+     * @return int, if bigger = 1, small = -1, equals = 0
      */
     public int compareTo (StringList str) {
         if(str == null && _head != null){
@@ -309,9 +261,9 @@ public class StringList {
     }
 
     /**
-     * todo: finishes make it work and do substring(i,j), if null or empty add support..
+     * substring on StringList object from index i on object string till its end
      * @param i
-     * @return
+     * @return StringList from i
      */
     public StringList substring(int i) {
         String s = toString();
@@ -350,6 +302,10 @@ public class StringList {
         return new StringList(_r);
     }
 
+    /**
+     * return count of Stringlist chars
+     * @return int
+     */
     public int length() {
         int count = 0;
         CharNode keepFirst = _head;
@@ -366,21 +322,20 @@ public class StringList {
     }
 
     /**
-     * todo: toString receving toString, fix "\"" issue
+     * Object to string.. not that intesting..
      * @return String wrapped with ""
      */
     public String toString() {
         CharNode keepFirst = _head;
         String r = "\"";
         while (_head != null){
-//            System.out.println("[getValue] == " + _head.getValue());
             if(_head.getValue() > 1){
                 int timesToRepeat = _head.getValue();
-                String tmp = "";
+                String _t = "";
                 for (int i = 0; i < timesToRepeat; i++){
-                    tmp += _head.getData();
+                    _t += _head.getData();
                 }
-                r += tmp;
+                r += _t;
             } else if(_head.getValue() == 1){
                 r += _head.getData();
             }
