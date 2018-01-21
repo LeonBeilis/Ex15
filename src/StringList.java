@@ -256,16 +256,52 @@ public class StringList {
         return 1;
     }
 
-    /*
-
+    /**
+     * todo: finishes make it work and do substring(i,j)
+     * @param i
+     * @return
+     */
     public StringList substring(int i) {
-
+        CharNode _f = _head;
+        int _l = 0;
+        String s = toString();
+        s = s.replace("\"","");
+        System.out.println(s);
+        String _r = new String();
+        while (_head != null) {
+            if(i >= _l){
+                _r += s.charAt(_l);
+                if(_head.getValue() > 1){
+                    for (int z = 1; z < _head.getValue(); z++){
+                        _r += _head.getData();
+                    }
+                }
+            }
+            if(_head.getValue() > 1){
+                _l += _head.getValue();
+            } else {
+                _l++;
+            }
+            _head = _head.getNext();
+        }
+//        _r = _r.replace("\"","");
+        System.out.println(_r);
+        System.exit(0);
+        return new StringList(_r);
     }
 
+    /*
     public StringList substring(int i, int j) {
 
     }
-
+    public StringList substring(int i, int j) {
+        CharNode SaveFirst = _head;
+        while ( (_head.getValue() == i) &&(i != null) ) {
+            return i++;
+            if (i - (j - 1));
+            return (j-1);
+        }
+    }
     */
 
     public int length() {

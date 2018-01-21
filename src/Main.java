@@ -15,15 +15,16 @@ public class Main {
         //aaaaaaaaaaaaab
         //eeeffffaabbbacddd
         //eeeffffaabbbacddd
-//        StringList s = new StringList("aabbbacddd");
-        StringList s = new StringList("aabbbacadd");
+        StringList s = new StringList("aabbbacddd");
 //        StringList s1 = new StringList("eeeffff");
         StringList s1 = new StringList("aaaaaab");
 //        StringList s2 = s1.concat(s);
 //        System.out.println("copied string is: " + s1);
 //        System.out.println("concat s and s1 is: " + s2);
 //        System.out.println("compareTo s and s1 is: " + s1.equals(s));
-        System.out.println("indexof on s is: " + s.indexOf(97,6));
+//        System.out.println("indexof on s is: " + s.indexOf(97,6));
+        StringList a1 = s.substring(2); //bbbacddd
+        System.out.println("substring on s is: " + a1);
         /*
         System.out.println("CharAt test on index 1 " + s.charAt(1));
         System.out.println("CharAt test on index 2 " + s.charAt(2));
