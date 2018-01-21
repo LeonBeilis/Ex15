@@ -26,7 +26,7 @@ public class StringList {
      * @param s
      */
     public StringList (String s) {
-        if(s == null) {
+        if(s == null || s == "") {
             _head = null;
         } else {
             _head = new CharNode( s.charAt(0), 1,null);
@@ -51,38 +51,68 @@ public class StringList {
 
     /**
      * Copy Constructor
-     * todo: fix for loop, value is times the char counted in row..
      * @param other
      */
     public StringList (StringList other) {
-        System.out.println("other: " + other);
-//        String toString = other.toString();
-//        return new StringList(toString);
-        /*
-        int otherLength = other.length();
-        _head = new CharNode( other.charAt(0), 1,null); //node init
-        if(otherLength <= 1){ // if one letter
+        if(other == null){
+            _head = null;
+            return;
+        }
+        String s = new String(other.toString());
+        s = s.replace("\"",""); //remove "" from other
+        _head = new CharNode( s.charAt(0), 1,null);
+        if(s.length() <= 1){ // if one letter
             return;
         }
         CharNode tmp = _head;
-        for(int i=1; i < otherLength; i++){
-            _head.setNext( new CharNode( other.charAt(i), i,null) );
-            _head = _head.getNext();
+        System.out.println(s);
+        int nextCharIndex = 1;
+        while ( nextCharIndex < s.length() ) {
+            if(_head.getData() == s.charAt(nextCharIndex)) { //update value
+//                System.out.println("nextCharIndex: " + nextCharIndex);
+//                System.out.println("_head.getValue(): " + _head.getValue());
+                _head.setValue( _head.getValue() + 1 );
+                nextCharIndex++;
+            } else {
+                _head.setNext( new CharNode( s.charAt(nextCharIndex), 1,null) );
+                _head = _head.getNext();
+//                System.out.println("new _head value: " + _head.getValue());
+//                System.out.println("nextCharIndex: " + nextCharIndex);
+                nextCharIndex++;
+            }
         }
         _head = tmp; //reset _head to first
-        */
+        System.out.println(toString());
     }
 
     /**
      * return char by index
-     * todo: check if while reach to null, what to do then
      * @param i
      * @return
      */
     public char charAt(int i) {
         CharNode keepFirst = _head;
-        while (  (_head.getValue() != i) && _head != null ) {
-            _head = _head.getNext();
+        int c = 0;
+        boolean flag = true;
+        while (  _head != null && flag ) {
+            if( _head.getValue() > 1 ) {
+                int l = c;
+                c += _head.getValue();
+                if(i < c && i >= l){ //in range
+                    flag = false;
+                    break;
+                } else {
+                    _head = _head.getNext();
+                }
+            } else {
+                if(i == c){
+                    flag = false;
+                    break;
+                } else {
+                    c++;
+                    _head = _head.getNext();
+                }
+            }
         }
         char foundCharacter = _head.getData();
         _head = keepFirst;
@@ -90,61 +120,246 @@ public class StringList {
     }
 
     /**
-     * todo: test it, mostly need to do all over
+     * todo: test this method, fix concat aliasing..
      * @param str
      * @return
      */
     public StringList concat (StringList str) {
-        CharNode _headTmp = _head;
-        String listA = new String();
-        while (  _head != null ) {
-            listA += _head.getData();
+        //save local _head
+//        CharNode reset = _head;
+        //new head
+        /*
+        CharNode _concatStart = _head;
+        if(_head != null){
+            while (_head != null){
+                if(_head.getNext() == null){
+                    break;
+                }
+                _head = _head.getNext();
+            }
+        }
+        CharNode _concatFrom = _head;
+        _head = reset; //rest to first
+        */
+
+        if(_head == null && str == null){
+            return new StringList();
+        }
+
+        if(str == null) {
+            String tmp = new String(toString()); //self
+            return new StringList(tmp); //return self and exit
+        }
+
+        String loc = new String(str.toString()); //new String to concat
+        loc = loc.replace("\"",""); //remove "" from other
+        String s = new String(str.toString()); //new String to concat
+        s = s.replace("\"",""); //remove "" from other
+        String _r_s = new String(loc + s);
+        return new StringList(_r_s);
+        /*
+        System.out.println("loc: " + loc);
+        System.out.println("s: " + s);
+        System.exit(0);
+        */
+
+        /*
+        CharNode _concatFrom = null;
+        _concatFrom.setNext(  new CharNode( s.charAt(0), 1,null) );
+        _concatFrom = _concatFrom.getNext();
+        */
+        /*
+        if(_concatFrom == null) {
+            _concatFrom = new CharNode( s.charAt(0), 1,null);
+        } else {
+            _concatFrom.setNext(  new CharNode( s.charAt(0), 1,null) );
+        }
+        */
+//        _concatFrom = _concatFrom.getNext();
+        /*
+        if(s.length() <= 1){ // if one letter
+            return new StringList(_concatFrom);
+        }
+        int nextCharIndex = 1;
+        while ( nextCharIndex < s.length() ) {
+            if(_concatFrom.getData() == s.charAt(nextCharIndex)) { //update value
+                _concatFrom.setValue( _concatFrom.getValue() + 1 );
+                nextCharIndex++;
+            } else {
+                _concatFrom.setNext( new CharNode( s.charAt(nextCharIndex), 1,null) );
+                _concatFrom = _concatFrom.getNext();
+                nextCharIndex++;
+            }
+        }
+//        _head = reset; //rest to first
+*/
+//        return new StringList(_concatFrom);
+    }
+
+    public int indexOf(int ch) {
+        CharNode _r = _head;
+        int i = 0;
+        while ( _head != null ) {
+            if(ch == (int) _head.getData()) {
+                _head = _r;
+                return i;
+            }
+            if(_head.getValue() > 1) {
+                i += _head.getValue();
+            } else {
+                i++;
+            }
             _head = _head.getNext();
         }
-        _head = _headTmp;
-        int strIndex = 0;
-        int strLength = str.length();
-        while ( strIndex < strLength ) {
-            listA += str.charAt(strIndex);
-            strIndex++;
+        _head = _r;
+        return -1;
+    }
+
+    public int indexOf(int ch, int fromIndex) {
+        if(fromIndex < 0){
+            return -1;
         }
-        StringList concatStringList = new StringList(listA);
-        return concatStringList;
+        CharNode _r = _head;
+        int i = 0;
+        while ( _head != null ) {
+            if(ch == (int) _head.getData()) {
+                if(i >= fromIndex){
+                    _head = _r;
+                    return i;
+                }
+            }
+            if(_head.getValue() > 1) {
+                i += _head.getValue();
+            } else {
+                i++;
+            }
+            _head = _head.getNext();
+        }
+        _head = _r;
+        return -1;
     }
-    /*
 
-    public int indexOf (int ch) {
-
+    /**
+     * recursive check if chars equals, increasing offset if does
+     * @param str
+     * @param _strOffset
+     * @return
+     */
+    public boolean equals (StringList str, int _strOffset) {
+        if( _strOffset >= str.length()){ //end
+            return true;
+        } else if( charAt(_strOffset) == str.charAt(_strOffset) ){
+            _strOffset++;
+            return equals(str, _strOffset);
+        } else {
+            System.out.println("=======[INSIDE ELSE FALSE]=======");
+            return false;
+        }
     }
 
-    public int indexOf (int ch, int fromIndex) {
-
-    }
-
+    /**
+     * check if self equal to str in recursive state
+     * @param str
+     * @return
+     */
     public boolean equals (StringList str) {
-
+        if(str == null && _head != null){
+            return false;
+        }
+        boolean ans = false;
+        String self = new String(toString());
+        self = self.replace("\"",""); //remove "" from other
+        String strl = new String(str.toString());
+        strl = strl.replace("\"",""); //remove "" from other
+        if(!self.equals(strl)) { //diff length ofc false
+            return false;
+        }
+        ans = equals( str, 0);
+        return ans;
     }
 
+    /**
+     * compare between stringlist value depended
+     * self == str = 0 | self < str = -1 | self > str = 1;
+     * @param str
+     * @return int
+     */
     public int compareTo (StringList str) {
-
+        if(str == null && _head != null){
+            return 1;
+        } else if( _head == null && str != null){
+            return -1;
+        } else if( _head == null && str == null){
+            return 0;
+        }
+        int listSelf = 0;
+        int listStr = 0;
+        for (int i = 0; i < length(); i++){
+            listSelf += (int) charAt(i);
+        }
+        for (int i = 0; i < str.length(); i++){
+            listStr += (int) str.charAt(i);
+        }
+        if(listSelf == listStr){
+            return 0;
+        } else if( listSelf < listStr){
+            return -1;
+        }
+        return 1;
     }
 
+    /**
+     * todo: finishes make it work and do substring(i,j), if null or empty add support..
+     * @param i
+     * @return
+     */
     public StringList substring(int i) {
-
+        String s = toString();
+        s = s.replace("\"","");
+        if(i == 0){ // no changes
+            return new StringList(s);
+        } else if (i >= s.length()){ // on last index
+            return new StringList();
+        }
+        String _r = new String();
+        for ( int _d = i; _d < s.length(); _d++){
+            _r += charAt(_d);
+        }
+        return new StringList(_r);
     }
 
+    /**
+     * return substring from i (include) to j (not include)
+     * @param i, j
+     * @return
+     */
     public StringList substring(int i, int j) {
-
+        String s = toString();
+        s = s.replace("\"","");
+        if(i >= j || j > s.length()){ //wrong value, return empty
+            return new StringList();
+        } else if(i==0 && j==s.length()){ // return self if values match string length
+            return new StringList(s);
+        }
+        String _r = new String();
+        for ( int _d = i; _d < s.length(); _d++){
+            if(_d >= i && _d < j) {
+                _r += charAt(_d);
+            }
+        }
+        return new StringList(_r);
     }
-
-    */
 
     public int length() {
         int count = 0;
         CharNode keepFirst = _head;
         while (  _head != null ) {
+            if(_head.getValue() > 1){
+                count += _head.getValue();
+            } else {
+                count++;
+            }
             _head = _head.getNext();
-            count++;
         }
         _head = keepFirst;
         return count;
@@ -152,17 +367,17 @@ public class StringList {
 
     /**
      * todo: toString receving toString, fix "\"" issue
-     * @return
+     * @return String wrapped with ""
      */
     public String toString() {
         CharNode keepFirst = _head;
         String r = "\"";
         while (_head != null){
+//            System.out.println("[getValue] == " + _head.getValue());
             if(_head.getValue() > 1){
                 int timesToRepeat = _head.getValue();
-                timesToRepeat++;
                 String tmp = "";
-                for (int i = 1; i < timesToRepeat; i++){
+                for (int i = 0; i < timesToRepeat; i++){
                     tmp += _head.getData();
                 }
                 r += tmp;

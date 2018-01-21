@@ -5,7 +5,6 @@
  */
 public class StringListDriver {
     public static void main(String[] args) {
-        /*
         CharNode node1= new CharNode('b',3,null);
         CharNode node2= new CharNode('a',2,node1);
         System.out.println("The value of node1 is: " + node1.getValue());
@@ -40,7 +39,6 @@ public class StringListDriver {
         System.out.println("sub string s form place 2 to the end of the string is: " + s.substring(2));
 
         System.out.println("sub string s from place 1 to place 3 is: " + s.substring(1,3));
-        */
    }
 }
 
